@@ -10,12 +10,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MainComponent } from './inspection/main/main.component';
 import { EditComponent } from './inspection/edit/edit.component';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MainComponent,
-    EditComponent
+    EditComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -26,6 +28,7 @@ import { EditComponent } from './inspection/edit/edit.component';
     ReactiveFormsModule,
     MaterialModule
   ],
+  entryComponents: [ConfirmDialogComponent],
   providers: [],
   bootstrap: [AppComponent]
 })

@@ -1,0 +1,11 @@
+<div mat-dialog-content>
+  <mat-icon aria-hidden="false" color="warn">delete</mat-icon>
+  <p>Do you want to delete Inspection selected?</p>
+  <p>
+    Inspector: {{data.inspector.name}} , Customer: {{data.customer}}
+  </p>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button [mat-dialog-close]="'OK'" cdkFocusInitial color="warn">Ok</button>
+</div>
