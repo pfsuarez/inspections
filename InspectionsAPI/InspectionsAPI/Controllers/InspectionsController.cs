@@ -56,7 +56,19 @@ namespace InspectionsAPI.Controllers
 
             try
             {
-                var inspection = await repository.RemoveAsync(id);
+                var inspection = await repository.GetAsync(id);
+
+                if(inspection == null)
+                {
+                    return NotFound();
+                }
+
+                if(inspection.InspectionDate < DateTime.Today)
+                {
+                    return BadRequest("Inspection date could not be before of current date.");
+                }
+
+                inspection= await repository.RemoveAsync(id);
                 await unitOfWork.CommitAsync();
 
                 if (inspection == null)
@@ -82,8 +94,6 @@ namespace InspectionsAPI.Controllers
 
             try
             {
-                inspection.InspectionDate = DateTime.Now;
-
                 await repository.AddAsync(inspection);
                 await unitOfWork.CommitAsync();
 
