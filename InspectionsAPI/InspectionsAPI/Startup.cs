@@ -44,6 +44,16 @@ namespace InspectionsAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Inspection API", Version = "v1" });
             });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsEnabledSites",
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:4200")
+                            .AllowAnyMethod();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,6 +68,8 @@ namespace InspectionsAPI
 
             app.UseRouting();
 
+            app.UseCors("CorsEnabledSites");
+
             app.UseAuthorization();
 
             app.UseSwagger();
@@ -66,7 +78,6 @@ namespace InspectionsAPI
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Inspections API V1");
             });
-
 
             app.UseEndpoints(endpoints =>
             {
