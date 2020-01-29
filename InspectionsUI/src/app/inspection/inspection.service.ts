@@ -1,5 +1,5 @@
 import { Inspectors, Inspections } from './inspection.model';
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -37,6 +37,13 @@ export class InspectionService {
     }
 
     return this.http.get<Inspections[]>(this.inspectionsControllerUrl, { params })
+      .pipe(
+        catchError(err => this.handleError(err))
+      );
+  }
+
+  public deleteInspection(id: number) {
+    return this.http.delete<Inspections>(`${this.inspectionsControllerUrl}/${id}`)
       .pipe(
         catchError(err => this.handleError(err))
       );

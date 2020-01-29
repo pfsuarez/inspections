@@ -16,7 +16,7 @@ export interface Status extends Base {
 export interface Inspections {
   id: number;
   customer: string;
-  inspectionDate: string;
+  inspectionDate: Date;
   address: string;
   observations: string;
   inspector: Inspectors;

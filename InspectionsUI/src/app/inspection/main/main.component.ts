@@ -1,9 +1,11 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MatSnackBar, MatTableDataSource, MatPaginator, MatSelectChange } from '@angular/material';
+import { MatSnackBar, MatTableDataSource, MatPaginator, MatSelectChange, MatDialog } from '@angular/material';
+import * as moment from 'moment';
 
 import { InspectionService } from '../inspection.service';
 import { Inspectors, Inspections } from './../inspection.model';
+import { ConfirmDialogComponent } from './../../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-main',
@@ -14,17 +16,27 @@ export class MainComponent implements OnInit, OnDestroy {
   inspectorsSub: Subscription;
   inspectionsSub: Subscription;
 
+  currentDate = moment(new Date());
   inspectors: Inspectors[] = [];
-  customerOrStatusFilter = '';
-  inspectorSelected: Inspectors;
+  inspectorSelectedValue: number;
 
-  displayedColumns: string[] = ['inspector', 'inspectionDate', 'address', 'observations', 'status', 'customActions'];
+  customerOrStatusFilter = '';
+  set CustomerOrStatusFilter(value: string) {
+    this.customerOrStatusFilter = value;
+    this.loadInspections();
+  }
+  get CustomerOrStatusFilter() {
+    return this.customerOrStatusFilter;
+  }
+
+  displayedColumns: string[] = ['inspector', 'customer', 'inspectionDate', 'address', 'observations', 'status', 'customActions'];
   inspections = new MatTableDataSource<Inspections>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   constructor(
     private inspectionService: InspectionService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -46,34 +58,56 @@ export class MainComponent implements OnInit, OnDestroy {
     this.inspectorsSub = this.inspectionService.getInspectors()
       .subscribe(inspectors => {
         this.inspectors = inspectors;
-      }, err => this.showError(err));
+      }, err => this.showMessage(err));
   }
 
   private loadInspections() {
-    const customer = null;
-    const inspectorId = null; //this?.inspectorSelected?.id;
+    const customer = this.CustomerOrStatusFilter ? this.customerOrStatusFilter : null;
+    // const inspectorId = this.inspectorSelectedValue ?? null;
+    const inspectorId = this.inspectorSelectedValue ? this.inspectorSelectedValue : null;
 
-    this.inspectorsSub = this.inspectionService.getInspections(customer, inspectorId)
+    this.inspectionsSub = this.inspectionService.getInspections(customer, inspectorId)
       .subscribe(inspections => {
         this.inspections = new MatTableDataSource<Inspections>(inspections);
-      }, err => this.showError(err));
+        console.log('', inspections);
+      }, err => this.showMessage(err));
+  }
+
+  private deleteInspection(deleteId) {
+    this.inspectionsSub = this.inspectionService.deleteInspection(deleteId)
+      .subscribe(result => {
+        this.loadInspections();
+        this.showMessage('Inspection Deleted');
+      }, err => this.showMessage(err));
   }
 
   onInspectorsSelectionChanged(inspector: MatSelectChange) {
-    console.log('', inspector);
     this.loadInspections();
   }
 
-  onDelete(inspectionId) {
-    console.log('', inspectionId);
+  onDelete(inspection: Inspections) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '250px',
+      data: inspection
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult === 'OK') {
+        this.deleteInspection(inspection.id);
+      }
+    });
   }
 
-  private showError(errMessage: string) {
+  validateDate(currentInspectionDate) {
+    const inspectionDate = moment(new Date(currentInspectionDate));
+    return inspectionDate.startOf('day').isBefore(this.currentDate.startOf('day')) ? false : true;
+  }
+
+  private showMessage(message: string) {
     this.snackBar.open(
-      errMessage,
+      message,
       '',
       { duration: 5000 }
     );
   }
-
 }
