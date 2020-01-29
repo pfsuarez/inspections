@@ -23,9 +23,12 @@ namespace InspectionsAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery]string customerOrStatus = null, [FromQuery]int? inspectorId = null)
         {
-            return Ok(await repository.GetAsync(includeProperties: "Inspector,Status"));
+            return Ok(await repository.GetAsync(x=> 
+            (customerOrStatus == null || x.Customer.Contains(customerOrStatus) || x.Status.Name.Contains(customerOrStatus)) && 
+            (inspectorId == null || x.InspectorId == inspectorId)
+            ,includeProperties: "Inspector,Status"));
         }
 
         [HttpGet]
