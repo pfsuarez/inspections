@@ -12,14 +12,24 @@ const routes: Routes = [
   },
   {
     path: 'inspections',
-    component: MainComponent
+    component: MainComponent,
+    // children: [
+    //   {
+    //     path: '',
+    //     component: MainComponent
+    //   },
+    //   {
+    //     path: 'edit/:id',
+    //     component: EditComponent
+    //   }
+    // ]
   },
   {
-    path: 'create',
+    path: 'inspections/create',
     component: EditComponent
   },
   {
-    path: 'edit/:id',
+    path: 'inspections/edit/:id',
     component: EditComponent
   },
   {
