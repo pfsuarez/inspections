@@ -42,7 +42,7 @@ namespace InspectionsAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(inspection);
+            return Ok(inspection.First());
         }
 
         [HttpDelete]
