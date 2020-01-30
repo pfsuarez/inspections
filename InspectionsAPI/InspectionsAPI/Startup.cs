@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using InspectionsAPI.Core;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
+using InspectionsAPI.Services;
 
 namespace InspectionsAPI
 {
@@ -35,6 +36,7 @@ namespace InspectionsAPI
                 options.UseSqlServer(Configuration.GetConnectionString("Default"));
             });
 
+            services.AddScoped<InspectionService>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 

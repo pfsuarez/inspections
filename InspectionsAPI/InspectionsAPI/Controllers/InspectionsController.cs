@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using InspectionsAPI.Core;
 using InspectionsAPI.Core.Models;
+using InspectionsAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,11 +16,13 @@ namespace InspectionsAPI.Controllers
     {
         private readonly IRepository<Inspection> repository;
         private readonly IUnitOfWork unitOfWork;
+        private readonly InspectionService service;
 
-        public InspectionsController(IRepository<Inspection> repository, IUnitOfWork unitOfWork)
+        public InspectionsController(IRepository<Inspection> repository, IUnitOfWork unitOfWork, InspectionService service)
         {
             this.repository = repository;
             this.unitOfWork = unitOfWork;
+            this.service = service;
         }
 
         [HttpGet]
@@ -43,6 +46,31 @@ namespace InspectionsAPI.Controllers
             }
 
             return Ok(inspection.First());
+        }
+
+        [HttpGet]
+        [Route("ValidateCreate")]
+        public async Task<IActionResult>ValidateCreate([FromQuery]int? inspectorId, [FromQuery]DateTime? inspectionDate)
+        {
+            try
+            {
+                var result = await service.ValidateOnCreate(inspectorId, inspectionDate);
+
+                if (result)
+                {
+                    return Ok(true);
+                }
+
+                throw new ApplicationException("Only one Inspection per Inspector and Day could be added.");
+            }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest("An error was thrown while trying to validate inspection.");
+            }
         }
 
         [HttpDelete]
@@ -94,10 +122,21 @@ namespace InspectionsAPI.Controllers
 
             try
             {
+                var result = await service.ValidateOnCreate(inspection.InspectorId, inspection.InspectionDate);
+
+                if (!result)
+                {
+                    throw new ApplicationException("Only one Inspection per Inspector and Day could be created.");
+                }
+
                 await repository.AddAsync(inspection);
                 await unitOfWork.CommitAsync();
 
                 return Ok(inspection);
+            }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception)
             {
@@ -119,18 +158,29 @@ namespace InspectionsAPI.Controllers
                 return BadRequest();
             }
 
-            var inspectionDB = await repository.GetAsync(id);
-
-            if (inspectionDB == null)
-            {
-                return NotFound();
-            }
-
             try
             {
+                var inspectionDB = await repository.GetAsync(id);
+
+                if (inspectionDB == null)
+                {
+                    return NotFound();
+                }
+
+                var result = await service.ValidateOnCreate(inspection.InspectorId, inspection.InspectionDate);
+
+                if (!result)
+                {
+                    throw new ApplicationException("Only one Inspection per Inspector and Day could be created.");
+                }
+
                 repository.Update(inspection);
                 await unitOfWork.CommitAsync();
                 return Ok(inspection);
+            }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
