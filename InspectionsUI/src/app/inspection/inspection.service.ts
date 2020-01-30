@@ -58,6 +58,23 @@ export class InspectionService {
       );
   }
 
+  public ValidateCreate(inspectorId?: number, inspectionDate?: string) {
+    let params = new HttpParams();
+
+    if (inspectorId) {
+      params = params.append('inspectorId', inspectorId.toString());
+    }
+
+    if (inspectionDate) {
+      params = params.append('inspectionDate', inspectionDate);
+    }
+
+    return this.http.get<boolean>(`${this.inspectionsControllerUrl}/ValidateCreate`, { params })
+      .pipe(
+        catchError(err => this.handleError(err))
+      );
+  }
+
   public deleteInspection(id: number) {
     return this.http.delete<Inspections>(`${this.inspectionsControllerUrl}/${id}`)
       .pipe(
@@ -83,8 +100,8 @@ export class InspectionService {
   private handleError(errorRes: HttpErrorResponse) {
     const errorMessage = 'Se ha producido un error. Intente nuevamente.';
 
-    if (errorRes.error && errorRes.error.ExceptionMessage) {
-      return throwError(errorRes.error.ExceptionMessage);
+    if (errorRes.error) {
+      return throwError(errorRes.error);
     }
 
     return throwError(errorMessage);
