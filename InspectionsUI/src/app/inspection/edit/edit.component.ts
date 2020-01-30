@@ -1,8 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable, of } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
+import { map, catchError } from 'rxjs/operators';
+import * as moment from 'moment';
 
 import { InspectionService } from './../inspection.service';
 import { Inspections, Inspectors, Status } from '../inspection.model';
@@ -20,6 +22,7 @@ export class EditComponent implements OnInit, OnDestroy {
   statusSub: Subscription;
 
   pageMode: PageModeType = 'Create';
+  pageTitle = 'Create Inspection';
   inspectionId: number;
   inspection: Inspections;
   inspectionForm: FormGroup;
@@ -42,6 +45,7 @@ export class EditComponent implements OnInit, OnDestroy {
     if (this.route.snapshot.paramMap.has('id')) {
       this.inspectionId = +this.route.snapshot.paramMap.get('id');
       this.pageMode = 'Update';
+      this.pageTitle = 'Update Inspection';
       this.loadInspection();
     }
   }
