@@ -1,4 +1,4 @@
-import { Inspectors, Inspections } from './inspection.model';
+import { Inspectors, Inspections, Status } from './inspection.model';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -12,14 +12,23 @@ import { environment } from './../../environments/environment';
 export class InspectionService {
   private inspectionsControllerUrl: string;
   private inspectorsControllerUrl: string;
+  private statusControllerUrl: string;
 
   constructor(private http: HttpClient) {
     this.inspectionsControllerUrl = `${environment.serverUrl}/inspections`;
     this.inspectorsControllerUrl = `${environment.serverUrl}/inspectors`;
+    this.statusControllerUrl = `${environment.serverUrl}/status`;
   }
 
   public getInspectors() {
     return this.http.get<Inspectors[]>(this.inspectorsControllerUrl)
+      .pipe(
+        catchError(err => this.handleError(err))
+      );
+  }
+
+  public getStatuses() {
+    return this.http.get<Status[]>(this.statusControllerUrl)
       .pipe(
         catchError(err => this.handleError(err))
       );
@@ -42,11 +51,33 @@ export class InspectionService {
       );
   }
 
+  public getInspectionById(inspectionId: number) {
+    return this.http.get<Inspections>(`${this.inspectionsControllerUrl}/${inspectionId}`)
+      .pipe(
+        catchError(err => this.handleError(err))
+      );
+  }
+
   public deleteInspection(id: number) {
     return this.http.delete<Inspections>(`${this.inspectionsControllerUrl}/${id}`)
       .pipe(
         catchError(err => this.handleError(err))
       );
+  }
+
+  public saveInspection(formData, id?: number) {
+    if (id) {
+      formData.id = id;
+      return this.http.put<Inspections>(`${this.inspectionsControllerUrl}/${id}`, formData)
+        .pipe(
+          catchError(err => this.handleError(err))
+        );
+    } else {
+      return this.http.post<Inspections>(`${this.inspectionsControllerUrl}`, formData)
+        .pipe(
+          catchError(err => this.handleError(err))
+        );
+    }
   }
 
   private handleError(errorRes: HttpErrorResponse) {
