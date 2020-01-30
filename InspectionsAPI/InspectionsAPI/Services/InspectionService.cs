@@ -20,7 +20,7 @@ namespace InspectionsAPI.Services
         {
             if(inspectorId == null || inspectionDate == null)
             {
-                return false;
+                throw new ApplicationException("Inspector and Date must be filled");
             }
 
             var inspection = await repository.GetAsync(x =>

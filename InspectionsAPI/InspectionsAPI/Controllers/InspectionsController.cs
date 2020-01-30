@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using InspectionsAPI.Controllers.Resources;
 using InspectionsAPI.Core;
 using InspectionsAPI.Core.Models;
 using InspectionsAPI.Services;
@@ -50,11 +51,11 @@ namespace InspectionsAPI.Controllers
 
         [HttpGet]
         [Route("ValidateCreate")]
-        public async Task<IActionResult>ValidateCreate([FromQuery]int? inspectorId, [FromQuery]DateTime? inspectionDate)
+        public async Task<IActionResult> ValidateCreate([FromQuery]ValidateCreateInspectionResource resource)
         {
             try
             {
-                var result = await service.ValidateOnCreate(inspectorId, inspectionDate);
+                var result = await service.ValidateOnCreate(resource.InspectorId, resource.InspectionDate);
 
                 if (result)
                 {
