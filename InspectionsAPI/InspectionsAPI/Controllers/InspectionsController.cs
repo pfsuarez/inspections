@@ -168,11 +168,14 @@ namespace InspectionsAPI.Controllers
                     return NotFound();
                 }
 
-                var result = await service.ValidateOnCreate(inspection.InspectorId, inspection.InspectionDate);
-
-                if (!result)
+                if (inspectionDB.InspectionDate != inspection.InspectionDate)
                 {
-                    throw new ApplicationException("Only one Inspection per Inspector and Day could be created.");
+                    var result = await service.ValidateOnCreate(inspection.InspectorId, inspection.InspectionDate);
+
+                    if (!result)
+                    {
+                        throw new ApplicationException("Only one Inspection per Inspector and Day could be created.");
+                    }
                 }
 
                 repository.Update(inspection);
