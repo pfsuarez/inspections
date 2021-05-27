@@ -15,8 +15,8 @@ namespace InspectionsAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("ProductVersion", "3.1.1")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("InspectionsAPI.Core.Models.Inspection", b =>
@@ -28,13 +28,13 @@ namespace InspectionsAPI.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(500)")
-                        .HasMaxLength(500);
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Customer")
                         .IsRequired()
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("InspectionDate")
                         .HasColumnType("datetime2");
@@ -44,8 +44,8 @@ namespace InspectionsAPI.Migrations
 
                     b.Property<string>("Observations")
                         .IsRequired()
-                        .HasColumnType("nvarchar(1000)")
-                        .HasMaxLength(1000);
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
@@ -68,8 +68,8 @@ namespace InspectionsAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -85,8 +85,8 @@ namespace InspectionsAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -106,6 +106,20 @@ namespace InspectionsAPI.Migrations
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Inspector");
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("InspectionsAPI.Core.Models.Inspector", b =>
+                {
+                    b.Navigation("Inspections");
+                });
+
+            modelBuilder.Entity("InspectionsAPI.Core.Models.Status", b =>
+                {
+                    b.Navigation("Inspections");
                 });
 #pragma warning restore 612, 618
         }

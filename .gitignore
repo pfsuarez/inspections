@@ -45,3 +45,4 @@ InspectionsAPI/InspectionsAPI/obj/Debug/netcoreapp3.1/InspectionsAPI.csproj.Core
 InspectionsAPI/InspectionsAPI/obj/Debug/netcoreapp3.1/InspectionsAPI.genruntimeconfig.cache
 InspectionsAPI/InspectionsAPI/obj/Debug/netcoreapp3.1/InspectionsAPI.MvcApplicationPartsAssemblyInfo.cs
 InspectionsAPI/InspectionsAPI/obj/InspectionsAPI.csproj.nuget.dgspec.json
+/InspectionsAPI/InspectionsAPI/bin/Debug/net5.0
