@@ -1,4 +1,4 @@
 # InspectionsUI
-Angular8 - Angular Material - Bootstrap 4
+Angular12 - Angular Material12 - Bootstrap 4
 # InspectionsAPI
-NetCore3.1 - Ef Core - Repository - UnitOfWork - SqlServer LocalDb - Cors
+NetCore5.0 - Ef Core - Repository - UnitOfWork - SqlServer LocalDb - Cors
